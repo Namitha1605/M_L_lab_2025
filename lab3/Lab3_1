@@ -1,0 +1,69 @@
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import r2_score, mean_absolute_error, mean_squared_error
+from sklearn.preprocessing import StandardScaler
+import pandas as pd
+import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+def load_data():
+    data = pd.read_csv("data_ML.csv")
+    print(data.info())
+    return data
+
+def EDA():
+    data = load_data()
+    if data is None:
+        return
+
+    X = data.drop(["disease_score", "disease_score_fluct"], axis=1)
+    print(X.describe())
+    print(X.info())
+
+    # Random subset visualization
+    rng = np.random.RandomState(0)
+    indices = rng.choice(np.arange(data.shape[0]), size=60, replace=False)
+    subset = data.iloc[indices].drop(columns=["disease_score_fluct"])
+    subset["disease_score"] = pd.qcut(subset["disease_score"], 6).apply(lambda x: x.mid)
+    sns.pairplot(data=subset, hue="disease_score", palette="viridis")
+    plt.savefig("plot_disease_score.png")
+    print("the eda graph is plotted")
+
+def model_fit():
+    data = load_data()
+    if data is None:
+        return
+
+    X = data.drop(["disease_score", "disease_score_fluct"], axis=1)
+    y = data["disease_score"]
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.30, random_state=999)
+
+    # Scaling the data
+    scaler = StandardScaler()
+    X_train_scaled = scaler.fit_transform(X_train)
+    X_test_scaled = scaler.transform(X_test)
+
+    # Linear Regression Model
+    model = LinearRegression()
+    model.fit(X_train_scaled, y_train)
+    y_pred = model.predict(X_test_scaled)
+
+    # Metrics
+    r2 = r2_score(y_test, y_pred)
+    mae = mean_absolute_error(y_test, y_pred)
+    mse = mean_squared_error(y_test, y_pred)
+
+    print(f"R² Score: {r2:.4f}")
+    print(f"Mean Absolute Error: {mae:.4f}")
+    print(f"Mean Squared Error: {mse:.4f}")
+    print("Feature Coefficients:", model.coef_)
+    print("Intercept:", model.intercept_)
+
+def main():
+    load_data()
+    EDA()
+    model_fit()
+
+if __name__ == "__main__":
+    main()
