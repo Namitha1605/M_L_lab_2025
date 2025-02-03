@@ -1,0 +1,37 @@
+import matplotlib.pyplot as plt
+import pandas as pd
+import numpy as np
+from sklearn.preprocessing import MinMaxScaler
+
+# Load the dataset
+data = pd.read_csv('data.csv')
+
+print(data.columns)
+
+x = data['radius_mean'].values
+
+
+scaler = MinMaxScaler()
+x_normalized = scaler.fit_transform(x.reshape(-1, 1)) 
+
+x_sorted = np.sort(x_normalized.flatten())  
+
+z = 1 / (1 + np.exp(-x_sorted))
+
+z_derivative = z * (1 - z)
+
+plt.figure(figsize=(10, 6))
+
+plt.plot(x_sorted, z, label='Sigmoid Curve', color='b')
+
+plt.plot(x_sorted, z_derivative, label="Sigmoid Derivative", color='r', linestyle='--')
+
+plt.xlabel("Radius Mean (Normalized Input Value)")
+plt.ylabel("Value")
+plt.title("Sigmoid Function and Its Derivative")
+
+plt.grid(alpha=0.3)
+plt.legend()
+
+# Show plot
+plt.show()
