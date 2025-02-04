@@ -15,6 +15,9 @@ test_fold = K_fold // 3
 print(test_fold)
 print(f"print the k fold: {K_fold}")
 
+# List to store R-squared values
+r2_values = []
+
 # Cross-validation loop
 for i in range(k):
     From = i * K_fold
@@ -33,7 +36,7 @@ for i in range(k):
     X_train = np.c_[np.ones(X_training_data.shape[0]), X_training_data]
     X_test = np.c_[np.ones(X_test_data.shape[0]), X_test_data]
 
-    alpha = 0.0000000001
+    alpha = 0.0000001
     iterations = 500
     theta_training = np.random.randn(X_train.shape[1])
     print(f"training_theta: {theta_training}")
@@ -79,16 +82,22 @@ for i in range(k):
         # Calculate R-squared (R²) score
         r2 = 1 - (np.sum((y_test_data - predictions) ** 2) / np.sum((y_test_data - np.mean(y_test_data)) ** 2))
 
+        # Append the R-squared value to the list
+        r2_values.append(r2)
+
         # Print MSE and R-squared for this fold
         print(f"Mean Squared Error: {mse}")
         print(f"R-squared: {r2}")
-        mean_r2 = np.mean(r2)
-        print(f" mean : {mean_r2}")
-        std_r2 = np.std(r2)
-        print(f" std : {std_r2}")
+
+    if __name__ == "__main__":
+        main()
+
+# After all folds, calculate mean and standard deviation of R-squared values
+mean_r2 = np.mean(r2_values)
+std_r2 = np.std(r2_values)
+
+print(f"\nMean R-squared: {mean_r2}")
+print(f"Standard Deviation of R-squared: {std_r2}")
 
 
-
-if __name__ == "__main__":
-    main()
 
