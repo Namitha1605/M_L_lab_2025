@@ -1,0 +1,94 @@
+from os.path import split
+import numpy as np
+import matplotlib.pyplot as plt
+import pandas as pd
+
+data = pd.read_csv("data_ML.csv")
+print(data.columns)
+
+check_data_rows = data.shape[0]
+print(check_data_rows)
+
+k = 10
+K_fold = len(data) // k
+test_fold = K_fold // 3
+print(test_fold)
+print(f"print the k fold: {K_fold}")
+
+# Cross-validation loop
+for i in range(k):
+    From = i * K_fold
+    end = (i + 1) * K_fold
+    test_data = data.iloc[From:end]
+    training_data = data.drop(test_data.index)
+    print(f"training {training_data} and test_data {test_data}")
+    print(training_data.shape)
+    print(test_data.shape)
+
+    X_training_data = training_data[['age', 'BMI', 'BP', 'blood_sugar', 'Gender']].values
+    y_training_data = training_data['disease_score'].values
+    X_test_data = test_data[['age', 'BMI', 'BP', 'blood_sugar', 'Gender']].values
+    y_test_data = test_data['disease_score'].values
+
+    X_train = np.c_[np.ones(X_training_data.shape[0]), X_training_data]
+    X_test = np.c_[np.ones(X_test_data.shape[0]), X_test_data]
+
+    alpha = 0.0000000001
+    iterations = 500
+    theta_training = np.random.randn(X_train.shape[1])
+    print(f"training_theta: {theta_training}")
+
+
+    def gradient_descent(X_train, y_train, theta, alpha, iterations):
+        m = len(y_train)
+        cost_data = []
+        theta_data = []
+        for i in range(iterations):
+            predictions = np.dot(X_train, theta)
+            loss = predictions - y_train
+            cost = np.sum(loss ** 2)
+            cost_data.append(cost)
+            gradients = np.dot(X_train.T, loss)
+            theta = theta - alpha * gradients
+            theta_data.append(theta)
+
+            if i % 1 == 0:
+                print(f"Iteration {i}, Cost: {cost}")
+
+        return theta, cost_data, theta_data
+
+
+    def main():
+        # Train the model using gradient descent
+        theta_final, cost_data, theta_data = gradient_descent(X_train, y_training_data, theta_training, alpha,
+                                                              iterations)
+        print("\nFinal Parameters (Theta):", theta_final)
+
+        # Predictions on test data
+        predictions = np.dot(X_test, theta_final)
+        print("\nPredictions:", predictions)
+
+        theta_O = np.array(theta_data)
+        print(f"theta: {theta_O}")
+        column = theta_O[:, 2]  # Selecting a specific column
+        print("Selected column:", column)
+
+        # Calculate Mean Squared Error (MSE)
+        mse = np.mean((y_test_data - predictions) ** 2)
+
+        # Calculate R-squared (R²) score
+        r2 = 1 - (np.sum((y_test_data - predictions) ** 2) / np.sum((y_test_data - np.mean(y_test_data)) ** 2))
+
+        # Print MSE and R-squared for this fold
+        print(f"Mean Squared Error: {mse}")
+        print(f"R-squared: {r2}")
+        mean_r2 = np.mean(r2)
+        print(f" mean : {mean_r2}")
+        std_r2 = np.std(r2)
+        print(f" std : {std_r2}")
+
+
+
+if __name__ == "__main__":
+    main()
+
