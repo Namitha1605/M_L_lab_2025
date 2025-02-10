@@ -1,0 +1,15 @@
+import pandas as pd
+
+data = pd.read_csv("data_ML.csv")
+X = data.loc[:, 'age':'blood_sugar']
+
+def standardize_data(X):
+    z_score = (X - X.mean()) / X.std()
+    return z_score
+
+def main():
+    standardized_data = standardize_data(X)
+    print(standardized_data)
+
+if __name__ == "__main__":
+    main()
