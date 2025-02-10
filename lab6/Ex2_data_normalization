@@ -1,0 +1,21 @@
+import numpy as np
+import pandas as pd
+
+data = pd.read_csv("data_ML.csv")
+print(data.columns)
+
+X = data.loc[:, 'age':'blood_sugar']
+
+def normalize_data(X):
+    min_of_X = X.min()
+    max_of_X= X.max()
+    new_X = (X - min_X) / (max_X - min_X)
+    return new_X
+
+def main():
+    normalized_X = normalize_data(X)
+    print("Normalised features: ")
+    print(normalized_X)
+
+if __name__ == "__main__":
+    main()
