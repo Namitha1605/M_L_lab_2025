@@ -1,0 +1,41 @@
+#Build a classification model for wisconsin dataset using Ridge and Lasso classifier using scikit-learn
+from tkinter.messagebox import CANCEL
+
+from sklearn.datasets import load_breast_cancer
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.datasets import make_classification
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score
+
+data = load_breast_cancer
+cancer_data = load_breast_cancer(as_frame=True)
+print("as data frame")
+print(cancer_data)
+
+X = cancer_data.data
+Y= cancer_data.target
+X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.2, random_state=50)
+#Standardize features (important for logistic regression)
+scaler = StandardScaler()
+X_train = scaler.fit_transform(X_train)
+X_test = scaler.transform(X_test)
+
+#Ridge Classifier (L2 Regularization)
+ridge_clf = LogisticRegression(penalty='l2', solver='lbfgs', C=1.0)
+ridge_clf.fit(X_train, y_train)
+ridge_preds = ridge_clf.predict(X_test)
+ridge_acc = accuracy_score(y_test, ridge_preds)
+
+# Lasso Classifier (L1 Regularization)
+lasso_clf = LogisticRegression(penalty='l2', solver='liblinear', C=1.0)
+lasso_clf.fit(X_train, y_train)
+lasso_preds = lasso_clf.predict(X_test)
+print(lasso_preds)
+lasso_acc = accuracy_score(y_test, lasso_preds)
+print(f"lasso_acc:{lasso_acc}")
+print(f"ridge_accuaracy:{ridge_acc}")
+
+
+
+
