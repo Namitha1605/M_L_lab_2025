@@ -1,0 +1,38 @@
+import pandas as pd
+import numpy as np
+
+
+# Sample categorical data
+header = ['age','menopause','tumor-size','nv-nodes','node-caps','deg-malig','breast','breast-quad','irradiate']
+data = pd.read_csv("breast-cancer.csv",header=None,names=header)
+df = pd.DataFrame(data)
+print(df)
+print(df.shape)
+
+#ordinal encoding for one column by seetin the rank
+catagorical_data = ['age','menopause','tumor-size','nv-nodes','node-caps','deg-malig','breast','breast-quad','irradiate']
+# mapping = {"No":1,"yes":2}
+# df["breast-quad"] = df["breast-quad"].replace(mapping)
+# print(df["breast-quad"])
+
+#ncoding
+for col in catagorical_data:
+    df[col] = pd.Categorical(df[col])  # Convert to categorical type
+    df[col] = df[col].cat.codes  # Convert categories to ordinal numbers
+
+# Print encoding map for each column
+for col in catagorical_data:
+    print(f"Encoding Map for {col}: {dict(enumerate(df[col].astype('category').cat.categories))}")
+print(df.head(200))
+
+
+
+
+
+
+
+
+
+
+
+
