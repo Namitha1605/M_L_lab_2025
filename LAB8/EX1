@@ -1,0 +1,27 @@
+import numpy as np
+import pandas as pd
+
+# Load the dataset
+data = pd.read_csv("/home/ibab/PycharmProjects/Namitha/Syam_sir_class/lab4/data_ML.csv")
+print(data.columns)
+
+# Extract features (X) and target variable (Y)
+X = data.iloc[:, :-1].values
+Y = data.iloc[:, -1].values
+
+L1_regularization =  np.sum(np.abs(X))
+print("L1 Regularization:", L1_regularization)
+
+# Compute L2 norm regularization
+L2_regularization = np.sum(X**2)
+print("L2 Regularization:", L2_regularization)
+
+theta = np.random.rand(X.shape[1])
+
+for i in range(len(theta)):
+    theta = theta[i] * X[:, 0]
+    print(theta)
+
+
+
+
