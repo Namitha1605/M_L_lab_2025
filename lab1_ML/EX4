@@ -1,0 +1,14 @@
+import numpy as np
+import matplotlib.pyplot as plt
+# implement Guassian pdf mean = 0, sigam =15 is range[start -100 stop = 100 num = 100]
+
+def gaussian(x, mean=0, sigma=15):
+   return (1/(sigma * np.sqrt(2 * np.pi))) * np.exp(-(x - mean) ** 2/ (2 * sigma ** 2))
+
+x = np.linspace(-100, 100, 100)
+y = gaussian(x)
+
+plt.plot(x, y)
+plt.xlabel('x')
+plt.ylabel('y')
+plt.show()
