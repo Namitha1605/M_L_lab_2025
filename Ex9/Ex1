@@ -1,0 +1,36 @@
+#Write a program to partition a dataset (simulated data for regression)  into two parts,
+# based on a feature (BP) and for a threshold,t = 80.
+# Generate additional two partitioned datasets based on different threshold values of t = [78, 82].
+
+import pandas as pd
+import numpy as np
+
+# Load data
+data = pd.read_csv("data_ML.csv")
+
+# Display basic information about the DataFrame
+print(data.columns)
+print(data.shape)
+print(data.head())
+print(data.info())
+
+# Access the 'BP' column
+bp_column = data['BP']
+print(bp_column)
+# Split the data based on BP threshold
+threshold1 = 80
+# Filter rows where BP is greater than the threshold
+data_BP_below_80 = data[data['BP'] >= threshold1]   # BP values below 80
+# Filter rows where BP is 80 or above
+threshold2 = 78
+data_BP_78 = data[data['BP'] <= threshold2]  # BP values 80 and above
+threshold3 = 82
+data_BP_82 = data[data['BP'] >= threshold3]
+# Print results
+print("Rows where BP is  80:")
+print(data_BP_below_80)
+print("\nRows where BP is 78 :")
+print(data_BP_78)
+print("Rows where BP is  82:")
+print(data_BP_82)
+
