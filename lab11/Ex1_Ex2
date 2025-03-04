@@ -1,0 +1,38 @@
+# #Implement information gain measures.
+# The function should accept data points for parents, data points for both children and return an information gain value.
+
+import pandas as pd
+import numpy as np
+
+data = {
+    "none": ["circle", "circle"],
+    "some": ["square", "square", "square","square"],
+    "full": ["circle", "circle", "circle", "circle", "square", "square"]
+}
+
+df = pd.DataFrame.from_dict(data, orient='index')
+print(df)
+total = df.count().sum()
+print("Total count:", total)
+circle = total/2
+square = total/2
+#calculate the parent_data
+C_entropy_values = ((-circle/(circle+square)) * (np.log2(circle/(circle+square)))-(square/(circle+square))*(np.log2(circle/(circle+square))))
+print(f"parent_entropy_values:{C_entropy_values}")
+#calculate the children entropy
+P_entropy_values = [
+    (2 / total) * (- (1 * np.log2(1)) - (0 * np.log2(0) if 0 > 0 else 0)),  # None
+    (4 / total) * (- (1 * np.log2(1)) - (0 * np.log2(0) if 0 > 0 else 0)),  # Some
+    (6 / total) * (- (0.4 * np.log2(0.4)) - (0.6 * np.log2(0.6)))  # Full
+]
+
+# Print formatted entropy results
+print(f"Entropy values: {P_entropy_values}")
+print(f"children entropy: {sum(P_entropy_values)}")
+
+# calculate the information gain
+information_gain = (C_entropy_values - sum(P_entropy_values))
+print(f"information gain for entropy: {information_gain}")
+
+
+
