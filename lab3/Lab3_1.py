@@ -1,13 +1,12 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-from pandas.plotting import autocorrelation_plot
 
 # EDA
 data = pd.read_csv("simulated_data_multiple_linear_regression_for_ML.csv")
 print(data.columns)
 
-X = data[['age', 'BMI', 'BP', 'blood_sugar', 'Gender']].values
+X = data[['age', 'BMI', 'BP', 'blood_sugar', 'Gender']].values # to keep the values in data frame 
 print(X)
 Y = data[['disease_score']].values
 print(Y)
@@ -24,8 +23,8 @@ def compute_gradient(theta,X,Y,alpha=0.0001,iteration=1000):
     cost_history = []
     for i in range(iteration):
         h_theta = X @ theta
-        error2= h_theta-Y.flatten()
-        theta -= alpha * ( X.T @ error2)
+        error2= h_theta-Y.flatten() # flatten is used bcz as Y is 1D and h_theta is in series transpose helps in multiplying
+        theta -= alpha * ( X.T @ error2) # transpose is used as we use transpose x
 
         cost = compute_cost(theta,X,Y)
         cost_history.append(cost)
