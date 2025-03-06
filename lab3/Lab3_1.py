@@ -19,7 +19,7 @@ def compute_cost(theta,X,Y):
     error = h_theta - Y.flatten()
     cost = np.sum(error**2) / 2
     return cost
-def compute_gradient(theta,X,Y,alpha=0.0001,iteration=1000):
+def compute_gradient(theta,X,Y,alpha=0.000000001,iteration=1000):
     cost_history = []
     for i in range(iteration):
         h_theta = X @ theta
