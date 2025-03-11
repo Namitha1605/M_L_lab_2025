@@ -1,0 +1,42 @@
+import pandas as pd
+import numpy as np
+from sklearn.datasets import load_diabetes
+# load data
+def load_data():
+    X,Y = load_diabetes(return_X_y=True, as_frame=True)
+    return X, Y
+
+# set the threshold
+def split_data(X,Y,feature,threshold):
+    Left_S = X[feature] >= threshold
+    Right_S = X[feature] < threshold
+    return X[Left_S], Y[Left_S],X[Right_S],Y[Right_S]
+
+# calculate averge
+def calculate_sum_of_sq(Y):
+    return (np.sum(Y- np.mean(Y))**2)
+
+def build_tree(X, Y, max_depth=3, depth=0):
+    if depth >= max_depth or len(Y) <= 1:
+        return np.mean(Y)  # Leaf node (prediction)
+
+    # Find best split (implement later)
+    best_feature, best_threshold = None, None  # To be implemented
+    X_left, Y_left, X_right, Y_right = split_data(X, Y, best_feature, best_threshold)
+
+    # Recursively build left and right subtrees
+    left_tree = build_tree(X_left, Y_left, max_depth, depth + 1)
+    right_tree = build_tree(X_right, Y_right, max_depth, depth + 1)
+
+    return (best_feature, best_threshold, left_tree, right_tree)
+
+def predict(tree, X):
+    return np.mean(X)  # To be implemented
+# Load data
+X, Y = load_data()
+# Train the decision tree
+tree = build_tree(X, Y, max_depth=3)
+Y_pred = predict(tree, X)
+print("Sum of Squares:", calculate_sum_of_sq(Y))
+
+
