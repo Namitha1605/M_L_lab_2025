@@ -1,46 +1,86 @@
+
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
-from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import StandardScaler
+import matplotlib.pyplot as plt
+from sklearn.metrics import accuracy_score
+from sklearn.model_selection import KFold
+import seaborn as sns
 
-# Load dataset
-data = pd.read_csv('data.csv')
 
-# Drop 'Unnamed: 32' column if it exists
-if 'Unnamed: 32' in data.columns:
-    data = data.drop(columns=['Unnamed: 32'])
 
-data = data.dropna()  # Option 1: Drop rows with NaNs
-# data.fillna(data.mean(), inplace=True)  # Option 2: Fill NaNs with column means
+def data_load():
+    data = pd.read_csv("data(1).csv")
+    #EDA
+    print(data.info()) #data information
+    print(data.head()) # starting few data
+    print(data.describe()) # summary stats
+    print(data.isnull().sum()) #checking foe missing values
+    print(data.dtypes)
+    print(data.columns.str.strip())
+    df = data.drop(columns=["Unnamed: 32","id"])
+    print(f"df: {df}")
+    # label_encoder
+    df['diagnosis'] = df['diagnosis'].replace({'M':1,'B':0})
+    print(df)
+    df['diagnosis'] = df['diagnosis'].astype(int)
+    plt.figure(figsize=(10,8))
+    sns.heatmap(df.corr())
+    plt.show()
+    X = df.drop(columns='diagnosis')
+    print(X)
+    Y = df['diagnosis']
+    print(Y.head())
 
-data['diagnosis'] = data['diagnosis'].map({'M': 1, 'B': 0})
-X = data[['radius_mean', 'texture_mean', 'symmetry_worst']]
-y = data['diagnosis']
 
-# Split dataset into training and testing sets
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    return X,Y
 
-# Standardize features (important for logistic regression)
-scaler = StandardScaler()
-X_train = scaler.fit_transform(X_train)
-X_test = scaler.transform(X_test)
+def K_fold(X,Y):
+    k=10
+    accuracy_scores =[]
+    kf = KFold(n_splits=k,shuffle=True,random_state=50)
+    for train_index,test_index in kf.split(X):
+        X_train,X_test = X.iloc[train_index],X.iloc[test_index]
+        Y_train,Y_test = Y.iloc[train_index],Y.iloc[test_index]
 
-# Train logistic regression model
-model = LogisticRegression()
-model.fit(X_train, y_train)
+        scale = StandardScaler()
+        X_scaled_train = scale.fit_transform(X_train)
+        X_scaled_test = scale.transform(X_test)
 
-# Print coefficients
-print("Model coefficients:", model.coef_)
+        model = LogisticRegression(random_state=50)
+        model.fit(X_scaled_train,Y_train)
 
-z = np.linspace(-10, 10, 100)
-sigmoid = 1 / (1 + np.exp(-z))
-plt.plot(z, sigmoid, label="Sigmoid Function", color='blue')
-plt.axvline(0, color='gray', linestyle='--', alpha=0.7)  # Decision boundary at z=0
-plt.axhline(0.5, color='gray', linestyle='--', alpha=0.7)  # Threshold at 0.5
-plt.xlabel("z (logits)")
-plt.title("Sigmoid Function Curve")
-plt.legend()
-plt.grid(alpha=0.3)
-plt.show()
+        y_pred = model.predict(X_scaled_test)
+
+        accuracy = accuracy_score(Y_test,y_pred)
+        accuracy_scores.append(accuracy)
+
+    #,mean calculation for accuracy
+    mean = np.mean(accuracy_scores)
+    print(f"mean: {mean}")
+    stdev = np.std(accuracy_scores)
+    print(f"std: {stdev}")
+
+
+def sigmoid_graph():
+    z = np.linspace(-10,10,100)
+    sigmoid = 1/(1+np.exp(-z))
+    plt.plot(z,sigmoid)
+    plt.title("sigmoid_curve")
+    plt.xlabel('z')
+    plt.ylabel('sigmoid')
+    plt.grid(True)
+    plt.show()
+
+
+
+
+def main():
+    X,Y = data_load()
+    K_fold(X,Y)
+    sigmoid_graph()
+
+
+if __name__=="__main__":
+    main()
