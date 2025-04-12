@@ -35,7 +35,7 @@ def train_evaluate(x_train_scaled, x_test_scaled, y_train, y_test):
     acc = accuracy_score(y_test, y_pred)
     logloss = log_loss(y_test, y_proba)
 
-    print(f"✅ Accuracy Score: {acc:.4f}")
+    print(f"Accuracy Score: {acc:.4f}")
     print(f"🔍 Log Loss: {logloss:.4f}")
 
 
